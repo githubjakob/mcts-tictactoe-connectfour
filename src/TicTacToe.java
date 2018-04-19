@@ -38,7 +38,7 @@ public class TicTacToe {
                 player2.makeNextMove(board);
             }
 
-            int winningPlayer = board.isLatestMoveAWin();
+            int winningPlayer = board.getStatus();
 
             if (winningPlayer == 1 || winningPlayer == 2) {
                 System.out.println("winning player is: " + winningPlayer);

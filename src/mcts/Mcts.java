@@ -8,14 +8,26 @@ public class Mcts {
 
     private static final int MCTS_MAX_BRANCHING_FACTOR = 9;
 
-    private static final long MCTS_TIMER = 2; //in seconds
+    private static final long MCTS_TIMER = 200; //in milis
 
-    public static Board doMcts(Board currentBoard, int playerId) {
+    private final Board board;
+
+    private final int playerId;
+
+    private final int opponentId;
+
+    public Mcts(Board board, int playerId) {
+        this.board = board;
+        this.playerId = playerId;
+        this.opponentId = playerId % 2 + 1;
+    }
+
+    public Board doMcts() {
         System.out.println("MCTS working.");
 
-        Instant deadline = Instant.now().plusSeconds(MCTS_TIMER);
+        Instant deadline = Instant.now().plusMillis(MCTS_TIMER);
 
-        Node tree = new Node(currentBoard);
+        Node tree = new Node(board);
 
         while (Instant.now().isBefore(deadline)) {
 
@@ -23,99 +35,88 @@ public class Mcts {
             Node promisingNode = selectPromisingNode(tree);
 
             //EXPAND
-            Node selected = expandNodeAndReturnRandom(promisingNode);
+            Node selected = promisingNode;
+            if (selected.board.getStatus() == Board.GAME_IN_PROGRESS) {
+                selected = expandNodeAndReturnRandom(promisingNode);
+            }
 
             //SIMULATE
-            Node leaf = simulateLightPlayout(selected, playerId);
+            Node leaf = simulateLightPlayout(selected);
 
             //PROPAGATE
             backPropagation(leaf);
         }
 
         return tree.getChildWithMaxScore().board;
-
     }
 
     // if node is already a leaf, return the leaf
-    private static Node expandNodeAndReturnRandom(Node node) {
+    private Node expandNodeAndReturnRandom(Node node) {
 
         Node result = node;
 
-        if (node.board.isBoardFull()) {
-            return node;
-        }
-
         game.Board board = node.board;
 
-        for (int i = 0; i < MCTS_MAX_BRANCHING_FACTOR; i++) {
+        int count = 0;
 
-            game.Board move = board.getRandomLegalNextMove();
-            if (move == null) {
-                break;
-            }
+        for (Board move : board.getLegalNextMoves()) {
             Node child = new Node(move);
             child.parent = node;
             node.addChild(child);
 
             result = child;
+            count++;
+            if (count >= MCTS_MAX_BRANCHING_FACTOR) break;
         }
         return result;
     }
 
-    private static void backPropagation(Node leaf) {
+    private void backPropagation(Node leaf) {
         ++leaf.visits;
         Node node = leaf.parent;
-        int reward = leaf.score;
+        int reward = 0;
+        if (leaf.board.getStatus() == playerId) {
+            reward = 10;
+        }
+        leaf.score += reward;
 
         while (true) { // look for the root
             ++node.visits;
-            node.score += reward;
+            if (node.board.latestMoveByPlayer == playerId) {
+                node.score += reward;
+            } else {
+                node.score -= reward;
+            }
+
             if (node.parent == null) break;
             node = node.parent;
         }
     }
 
-    private static Node simulateLightPlayout(Node promisingNode, int playerId) {
+    private Node simulateLightPlayout(Node promisingNode) {
         Node node = promisingNode;
+        int boardStatus = node.board.getStatus();
 
-        if (promisingNode.board.pieces >= 9) {
-            return promisingNode;
-        }
+        /*if (boardStatus == opponentId) {
+            node.parent.score = Integer.MIN_VALUE;
+            return node;
+        }*/
 
-        boolean gameOver = false;
-        while (!gameOver) {
+        while (boardStatus == Board.GAME_IN_PROGRESS) {
             game.Board nextMove = node.board.getRandomLegalNextMove();
-
-            if (nextMove == null) {
-                throw new RuntimeException("board is full");
-            }
 
             Node child = new Node(nextMove);
             child.parent = node;
             node.addChild(child);
 
-            gameOver = checkGameCondition(child, playerId);
+            boardStatus = nextMove.getStatus();
+
             node = child;
         }
         return node;
     }
 
-    private static boolean checkGameCondition(Node node, int playerId) {
-        boolean gameOver = false;
-        int winner = node.board.isLatestMoveAWin();
-        if (winner > 0) {
-            if (winner == playerId) {
-                node.score++;
-            } else if (winner == playerId % 2 + 1) {
-                node.score--;
-            }
-
-            gameOver = true;
-        }
-        return gameOver;
-    }
-
-    private static Node selectPromisingNode(Node tree) {
+    private Node selectPromisingNode(Node tree) {
         Node node = tree;
         while (node.children.size() != 0) {
             node = UCT.findBestNodeWithUCT(node);

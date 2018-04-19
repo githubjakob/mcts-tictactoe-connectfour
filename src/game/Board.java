@@ -6,17 +6,35 @@ import java.util.List;
 
 public class Board {
 
+    public static final int GAME_IN_PROGRESS = 0;
+    public static final int PLAYER_1_WON = 1;
+    public static final int PLAYER_2_WON = 2;
+    public static final int DRAW = 3;
+
+    private static final Random RANDOM_GENERATOR = new Random();
+
     private int[][] state; // be careful that it is state[y][x]
 
-    private Point latestMove; // the coordinates of the piece set the last
+    public Point latestMove; // the coordinates of the piece set the last
 
-    private int latestMoveByPlayer; // the number of the player who set the last piece
+    public int latestMoveByPlayer; // the number of the player who set the last piece
 
     private int size; // the size of the board, eg. 3 for a 3*3 board
 
     public int pieces = 0; // the number of pieces already set on the board
 
-    private static final Random RANDOM_GENERATOR = new Random();
+    private Integer status = null;
+
+    public Board(int[][] state) {
+        this.size = state.length;
+        this.state = new int[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int n = 0; n < size; n++) {
+                this.state[i][n] = state[i][n];
+                if (state[i][n] != 0) ++this.pieces;
+            }
+        }
+    }
 
     public Board(int size) {
         this.size = size;
@@ -74,26 +92,14 @@ public class Board {
         return legalMoves.get(random);
     }
 
-    private Board cloneBoard() {
-        int[][] newState = new int[size][size];
-        Board newBoard = new Board(size);
-        newBoard.state = newState;
-        for (int i = 0; i < size; i++) {
-            for (int n = 0; n < size; n++) {
-                newState[i][n] = state[i][n];
-                if (state[i][n] != 0) ++newBoard.pieces;
-            }
-        }
-        return newBoard;
-    }
-
     // returns 0 if game is in progress, returns the number of the player who won, returns 3 for a even
-    public int isLatestMoveAWin() {
-        int row = 0, col = 0, diag = 0, rdiag = 0;
+    public int getStatus() {
 
-        if (isBoardFull()) {
-            return 3;
+        if (status != null) {
+            return status;
         }
+
+        int row = 0, col = 0, diag = 0, rdiag = 0;
 
         for (int i = 0; i < size; i++) {
             if (state[latestMove.y][i] == latestMoveByPlayer) row++;
@@ -101,23 +107,29 @@ public class Board {
             if (state[i][i] == latestMoveByPlayer) diag++;
             if (state[size - i - 1][i] == latestMoveByPlayer) rdiag++;
         }
+
         if (row == size || col == size || diag == size || rdiag == size) {
-            return latestMoveByPlayer;
+            status = latestMoveByPlayer == 1 ? PLAYER_1_WON : PLAYER_2_WON;
+            return status;
         }
 
-        return 0;
+        if (isBoardFull()) {
+            status = DRAW;
+            return status;
+        }
+
+        status = GAME_IN_PROGRESS;
+        return status;
     }
 
-    private java.util.List<Board> getLegalNextMoves() {
+    public java.util.List<Board> getLegalNextMoves() {
         int nextPlayer = latestMoveByPlayer % 2 + 1;
         List<Board> nextMoves = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             for (int n = 0; n < size; n++) {
                 if(state[i][n] == 0) {
-                    Board legalMove = this.cloneBoard();
+                    Board legalMove = new Board(this.state);
                     legalMove.setSquareOnBoard(new Point(n, i), nextPlayer);
-                    legalMove.latestMove = new Point(n, i);
-                    legalMove.latestMoveByPlayer = nextPlayer;
                     nextMoves.add(legalMove);
                 }
             }
