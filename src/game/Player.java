@@ -1,4 +1,6 @@
-import java.awt.*;
+package game;
+
+import game.Board;
 
 public interface Player {
 

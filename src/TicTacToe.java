@@ -1,16 +1,18 @@
+import game.Board;
+import game.Player;
+import game.Round;
+
 public class TicTacToe {
 
-    Board board;
+    private Board board;
 
-    Player player1;
+    private Player player1;
 
-    Player player2;
+    private Player player2;
 
-    boolean turn = true;
+    private boolean gameOver = false;
 
-    boolean gameOver = false;
-
-    public static final Round ROUND = new Round();
+    private static final Round ROUND = new Round();
 
     public TicTacToe(Player player1, Player player2) {
         board = new Board(3);
@@ -18,7 +20,7 @@ public class TicTacToe {
         this.player2 = player2;
     }
 
-    void play() {
+    public void play() {
         System.out.println("Game start");
         board.printBoard();
 
@@ -37,20 +39,20 @@ public class TicTacToe {
             }
 
             int winningPlayer = board.isLatestMoveAWin();
-            if (winningPlayer != 0) {
+
+            if (winningPlayer == 1 || winningPlayer == 2) {
                 System.out.println("winning player is: " + winningPlayer);
                 gameOver = true;
             }
 
-            turn = !turn;
+            if (winningPlayer == 3) {
+                System.out.println("It's a draw.");
+                gameOver = true;
+            }
+
             System.out.print("\n\n");
 
             board.printBoard();
         }
-
     }
-
-
-
-
 }

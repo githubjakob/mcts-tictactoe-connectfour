@@ -1,20 +1,22 @@
+package game;
+
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 
 public class Board {
 
-    int[][] state; // be careful that it is state[y][x]
+    private int[][] state; // be careful that it is state[y][x]
 
-    Point latestMove;
+    private Point latestMove; // the coordinates of the piece set the last
 
-    int latestMoveByPlayer;
+    private int latestMoveByPlayer; // the number of the player who set the last piece
 
-    int size;
+    private int size; // the size of the board, eg. 3 for a 3*3 board
 
-    int pieces = 0;
+    public int pieces = 0; // the number of pieces already set on the board
 
-    public static Random randomGenerator = new Random();
+    private static final Random RANDOM_GENERATOR = new Random();
 
     public Board(int size) {
         this.size = size;
@@ -27,7 +29,11 @@ public class Board {
         }
     }
 
-    void printBoard() {
+    public Point getLatestMoveCoordinates() {
+        return latestMove;
+    }
+
+    public void printBoard() {
         for (int i = 0; i < state.length; i++) {
             for (int n = 0; n < state[0].length; n++) {
                 System.out.print(state[i][n]);
@@ -38,12 +44,12 @@ public class Board {
     }
 
     // returns false when coordinates already marked
-    boolean setSquareOnBoard(Point coordinates, int player) {
+    public boolean setSquareOnBoard(Point coordinates, int player) {
         if (coordinates == null) {
             throw new RuntimeException("coordinates are null");
         }
         if (state == null) {
-            throw new RuntimeException("Board is null");
+            throw new RuntimeException("game.Board is null");
         }
 
         int current = state[coordinates.y][coordinates.x];
@@ -59,16 +65,16 @@ public class Board {
     }
 
     // returns null when board is full
-    Board getRandomLegalNextMove() {
+    public Board getRandomLegalNextMove() {
         final List<Board> legalMoves = getLegalNextMoves();
         if (legalMoves.isEmpty()) {
             return null;
         }
-        final int random = randomGenerator.nextInt(legalMoves.size());
+        final int random = RANDOM_GENERATOR.nextInt(legalMoves.size());
         return legalMoves.get(random);
     }
 
-    Board cloneBoard() {
+    private Board cloneBoard() {
         int[][] newState = new int[size][size];
         Board newBoard = new Board(size);
         newBoard.state = newState;
@@ -81,29 +87,28 @@ public class Board {
         return newBoard;
     }
 
-    // returns 0 if no, returns the number of the player who won, returns 3 for a even
-    int isLatestMoveAWin() {
-        int row = 0, col = 0, diag = 0, rdiag = 0, count = 0;
-        int boardSize = size;
+    // returns 0 if game is in progress, returns the number of the player who won, returns 3 for a even
+    public int isLatestMoveAWin() {
+        int row = 0, col = 0, diag = 0, rdiag = 0;
 
-        if (pieces == boardSize * boardSize) {
+        if (isBoardFull()) {
             return 3;
         }
 
-        for (int i = 0; i < boardSize; i++) {
+        for (int i = 0; i < size; i++) {
             if (state[latestMove.y][i] == latestMoveByPlayer) row++;
             if (state[i][latestMove.x] == latestMoveByPlayer) col++;
             if (state[i][i] == latestMoveByPlayer) diag++;
-            if (state[boardSize - i - 1][i] == latestMoveByPlayer) rdiag++;
+            if (state[size - i - 1][i] == latestMoveByPlayer) rdiag++;
         }
-        if (row == boardSize || col == boardSize || diag == boardSize || rdiag == boardSize) {
+        if (row == size || col == size || diag == size || rdiag == size) {
             return latestMoveByPlayer;
         }
 
         return 0;
     }
 
-    java.util.List<Board> getLegalNextMoves() {
+    private java.util.List<Board> getLegalNextMoves() {
         int nextPlayer = latestMoveByPlayer % 2 + 1;
         List<Board> nextMoves = new ArrayList<>();
         for (int i = 0; i < size; i++) {
@@ -118,5 +123,9 @@ public class Board {
             }
         }
         return nextMoves;
+    }
+
+    public boolean isBoardFull() {
+        return pieces == size * size;
     }
 }

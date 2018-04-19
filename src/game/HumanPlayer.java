@@ -1,13 +1,17 @@
+package game;
+
+import game.Board;
+
 import java.awt.*;
 import java.util.Scanner;
 
 public class HumanPlayer implements Player {
 
-    Scanner scanner = new Scanner(System.in);
+    private Scanner scanner = new Scanner(System.in);
 
-    int playerId; // should be 1 for player 1 or 2 for player 2
+    private int playerId; // should be 1 for player 1 or 2 for player 2
 
-    HumanPlayer(int playerId) {
+    public HumanPlayer(int playerId) {
         this.playerId = playerId;
     }
 

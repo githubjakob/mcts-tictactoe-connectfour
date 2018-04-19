@@ -1,15 +1,14 @@
-/**
- * Created by jakob on 19.04.18.
- */
+package game;
+
 public class Round {
 
     boolean turn;
 
-    Round() {
+    public Round() {
         this.turn = false;
     }
 
-    int nextRound() {
+    public int nextRound() {
         this.turn = !this.turn;
         return turn ? 1 : 2;
     }

@@ -1,14 +1,13 @@
-import java.awt.*;
+package mcts;
+
+import game.Board;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
 
-    String status = "GAME_IN_PROGRESS";
-
-    Board board;
-
-    int player;
+    public Board board;
 
     int visits;
 
@@ -20,11 +19,6 @@ public class Node {
 
     public Node(Board initBoard) {
         this.board = initBoard;
-        this.player = player;
-    }
-
-    void setBoard(Board board) {
-        this.board = board;
     }
 
     Node getChildWithMaxScore() {
