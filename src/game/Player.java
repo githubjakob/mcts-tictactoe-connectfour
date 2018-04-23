@@ -2,8 +2,10 @@ package game;
 
 import game.Board;
 
-public interface Player {
+public abstract class Player {
 
-    Board makeNextMove(Board board);
+    public Board makeNextMove(Board board) {
+        return null;
+    }
 
 }

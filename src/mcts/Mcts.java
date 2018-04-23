@@ -8,7 +8,7 @@ public class Mcts {
 
     private static final int MCTS_MAX_BRANCHING_FACTOR = 9;
 
-    private static final long MCTS_TIMER = 100; //in milis
+    //private static final long MCTS_TIMER = 100; //in milis
 
     private final Board board;
 
@@ -16,10 +16,13 @@ public class Mcts {
 
     private final int opponentId;
 
-    public Mcts(Board board, int playerId) {
+    private final int timer;
+
+    public Mcts(Board board, int playerId, int timer) {
         this.board = board;
         this.playerId = playerId;
         this.opponentId = playerId % 2 + 1;
+        this.timer = timer;
     }
 
     public Board doMcts() {
@@ -27,7 +30,7 @@ public class Mcts {
 
         long counter = 0l;
 
-        Instant deadline = Instant.now().plusMillis(MCTS_TIMER);
+        Instant deadline = Instant.now().plusMillis(timer);
 
         Node tree = new Node(board);
 
@@ -52,7 +55,7 @@ public class Mcts {
 
         Node best = tree.getChildWithMaxScore();
 
-        System.out.println("Did " + counter + " expansions/simulations withing " + MCTS_TIMER + " milis");
+        System.out.println("Did " + counter + " expansions/simulations withing " + timer + " milis");
         System.out.println("Best move scored " + best.score + " and was visited " + best.visits + " times");
 
         return best.board;
@@ -110,14 +113,12 @@ public class Mcts {
             return node;
         }
 
-        while (boardStatus == Board.GAME_IN_PROGRESS) {
+        while (node.board.getStatus() == Board.GAME_IN_PROGRESS) {
             game.Board nextMove = node.board.getWinningMoveOrElseRandom();
 
             Node child = new Node(nextMove);
             child.parent = node;
             node.addChild(child);
-
-            boardStatus = nextMove.getStatus();
 
             node = child;
         }

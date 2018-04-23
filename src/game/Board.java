@@ -1,5 +1,7 @@
 package game;
 
+import jdk.nashorn.internal.objects.annotations.Getter;
+
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -17,7 +19,7 @@ public class Board {
 
     public Point latestMove; // the coordinates of the piece set the last
 
-    public int latestMoveByPlayer; // the number of the player who set the last piece
+    public int latestMoveByPlayer = 2; // the number of the player who set the last piece
 
     private int size; // the size of the board, eg. 3 for a 3*3 board
 
@@ -85,6 +87,7 @@ public class Board {
     public Board getWinningMoveOrElseRandom() {
         final List<Board> legalMoves = getAllLegalNextMoves();
         if (legalMoves.isEmpty()) {
+            System.out.println("asdfasdf");
             return null;
         }
         for (Board move : legalMoves) {
@@ -136,7 +139,13 @@ public class Board {
     // returns 0 if game is in progress, returns the number of the player who won, returns 3 for a even
     public int getStatus() {
 
-        if (status != null) {
+        if (isBoardFull()) {
+            status = DRAW;
+            return status;
+        }
+
+        if (pieces == 0) {
+            status = GAME_IN_PROGRESS;
             return status;
         }
 
@@ -154,17 +163,13 @@ public class Board {
             return status;
         }
 
-        if (isBoardFull()) {
-            status = DRAW;
-            return status;
-        }
-
         status = GAME_IN_PROGRESS;
         return status;
     }
 
     public java.util.List<Board> getAllLegalNextMoves() {
         int nextPlayer = latestMoveByPlayer % 2 + 1;
+
         List<Board> nextMoves = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             for (int n = 0; n < size; n++) {

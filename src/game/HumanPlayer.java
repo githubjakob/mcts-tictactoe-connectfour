@@ -5,7 +5,7 @@ import game.Board;
 import java.awt.*;
 import java.util.Scanner;
 
-public class HumanPlayer implements Player {
+public class HumanPlayer extends Player {
 
     private Scanner scanner = new Scanner(System.in);
 
@@ -15,7 +15,6 @@ public class HumanPlayer implements Player {
         this.playerId = playerId;
     }
 
-    @Override
     public Board makeNextMove(Board board) {
         int move = scanner.nextInt();
         boolean success = board.setSquareOnBoard(new Point(move/10, move % 10), playerId);

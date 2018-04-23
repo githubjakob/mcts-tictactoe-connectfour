@@ -20,9 +20,11 @@ public class TicTacToe {
         this.player2 = player2;
     }
 
-    public void play() {
+    public int play() {
         System.out.println("Game start");
         board.printBoard();
+
+        int winningPlayer = 0;
 
         while (!gameOver) {
 
@@ -32,12 +34,12 @@ public class TicTacToe {
                 System.out.println("Player 1 move");
                 player1.makeNextMove(board);
 
-            } else if (player == 2) {
+            } else {
                 System.out.println("Player 2 move");
                 player2.makeNextMove(board);
             }
 
-            int winningPlayer = board.getStatus();
+            winningPlayer = board.getStatus();
 
             if (winningPlayer == 1 || winningPlayer == 2) {
                 System.out.println("winning player is: " + winningPlayer);
@@ -53,5 +55,7 @@ public class TicTacToe {
 
             board.printBoard();
         }
+
+        return winningPlayer;
     }
 }
