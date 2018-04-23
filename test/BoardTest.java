@@ -56,6 +56,30 @@ public class BoardTest {
     }
 
     @Test
+    public void game_won_2() {
+        int[] row1 = new int[] {
+                1,0,0
+        };
+
+        int[] row2 = new int[] {
+                1,1,0
+        };
+
+        int[] row3 = new int[] {
+                2,2,2
+        };
+
+        int[][] state = new int[][] {
+                row1, row2, row3
+        };
+        Board board = new Board(state);
+        board.latestMoveByPlayer = 2;
+        board.latestMove = new Point(1,2);
+        int result = board.getStatus();
+        Assert.assertEquals(2, result);
+    }
+
+    @Test
     public void game_getWinningMove() {
         int[] row1 = new int[] {
                 2,0,1

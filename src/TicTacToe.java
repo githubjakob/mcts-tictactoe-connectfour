@@ -31,9 +31,8 @@ public class TicTacToe {
             if (player == 1) {
                 System.out.println("Player 1 move");
                 player1.makeNextMove(board);
-            }
 
-            if (player == 2) {
+            } else if (player == 2) {
                 System.out.println("Player 2 move");
                 player2.makeNextMove(board);
             }

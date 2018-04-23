@@ -8,7 +8,7 @@ public class Mcts {
 
     private static final int MCTS_MAX_BRANCHING_FACTOR = 9;
 
-    private static final long MCTS_TIMER = 200; //in milis
+    private static final long MCTS_TIMER = 100; //in milis
 
     private final Board board;
 
@@ -25,11 +25,14 @@ public class Mcts {
     public Board doMcts() {
         System.out.println("MCTS working.");
 
+        long counter = 0l;
+
         Instant deadline = Instant.now().plusMillis(MCTS_TIMER);
 
         Node tree = new Node(board);
 
         while (Instant.now().isBefore(deadline)) {
+            counter++;
 
             //SELECT
             Node promisingNode = selectPromisingNode(tree);
@@ -47,7 +50,12 @@ public class Mcts {
             backPropagation(leaf);
         }
 
-        return tree.getChildWithMaxScore().board;
+        Node best = tree.getChildWithMaxScore();
+
+        System.out.println("Did " + counter + " expansions/simulations withing " + MCTS_TIMER + " milis");
+        System.out.println("Best move scored " + best.score + " and was visited " + best.visits + " times");
+
+        return best.board;
     }
 
     // if node is already a leaf, return the leaf
