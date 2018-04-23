@@ -13,7 +13,7 @@ public class Board {
 
     private static final Random RANDOM_GENERATOR = new Random();
 
-    private int[][] state; // be careful that it is state[y][x]
+    public int[][] state; // be careful that it is state[y][x]
 
     public Point latestMove; // the coordinates of the piece set the last
 
@@ -82,9 +82,50 @@ public class Board {
         return true;
     }
 
+    public Board getWinningMoveOrElseRandom() {
+        final List<Board> legalMoves = getAllLegalNextMoves();
+        if (legalMoves.isEmpty()) {
+            return null;
+        }
+        for (Board move : legalMoves) {
+            int player = move.latestMoveByPlayer;
+            if (move.state[0][0] == player) {
+                if (move.state[1][0] == player && move.state [2][0] == player) {
+                    return move;
+                }
+                if (move.state[0][1] == player && move.state[0][2] == player) {
+                    return move;
+                }
+            }
+
+            if (move.state[2][2] == player) {
+                if (move.state[1][2] == player && move.state [0][2] == player) {
+                    return move;
+                }
+                if (move.state[2][1] == player && move.state[2][0] == player) {
+                    return move;
+                }
+            }
+            if (move.state[1][1] == player) {
+                if (move.state[0][0] == player && move.state[2][2] == player) {
+                    return move;
+                }
+                if (move.state[1][0] == player && move.state[1][2] == player) {
+                    return move;
+                }
+                if (move.state[0][1] == player && move.state[2][1] == player) {
+                    return move;
+                }
+            }
+        }
+        final int random = RANDOM_GENERATOR.nextInt(legalMoves.size());
+        return legalMoves.get(random);
+
+    }
+
     // returns null when board is full
     public Board getRandomLegalNextMove() {
-        final List<Board> legalMoves = getLegalNextMoves();
+        final List<Board> legalMoves = getAllLegalNextMoves();
         if (legalMoves.isEmpty()) {
             return null;
         }
@@ -122,7 +163,7 @@ public class Board {
         return status;
     }
 
-    public java.util.List<Board> getLegalNextMoves() {
+    public java.util.List<Board> getAllLegalNextMoves() {
         int nextPlayer = latestMoveByPlayer % 2 + 1;
         List<Board> nextMoves = new ArrayList<>();
         for (int i = 0; i < size; i++) {

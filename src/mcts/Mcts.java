@@ -59,7 +59,7 @@ public class Mcts {
 
         int count = 0;
 
-        for (Board move : board.getLegalNextMoves()) {
+        for (Board move : board.getAllLegalNextMoves()) {
             Node child = new Node(move);
             child.parent = node;
             node.addChild(child);
@@ -97,13 +97,13 @@ public class Mcts {
         Node node = promisingNode;
         int boardStatus = node.board.getStatus();
 
-        /*if (boardStatus == opponentId) {
+        if (boardStatus == opponentId) {
             node.parent.score = Integer.MIN_VALUE;
             return node;
-        }*/
+        }
 
         while (boardStatus == Board.GAME_IN_PROGRESS) {
-            game.Board nextMove = node.board.getRandomLegalNextMove();
+            game.Board nextMove = node.board.getWinningMoveOrElseRandom();
 
             Node child = new Node(nextMove);
             child.parent = node;
