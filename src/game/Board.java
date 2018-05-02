@@ -13,7 +13,7 @@ public class Board {
     public static final int PLAYER_2_WON = 2;
     public static final int DRAW = 3;
 
-    private static final Random RANDOM_GENERATOR = new Random();
+    public static final Random RANDOM_GENERATOR = new Random();
 
     public int[][] state; // be careful that it is state[y][x]
 
@@ -87,7 +87,6 @@ public class Board {
     public Board getWinningMoveOrElseRandom() {
         final List<Board> legalMoves = getAllLegalNextMoves();
         if (legalMoves.isEmpty()) {
-            System.out.println("asdfasdf");
             return null;
         }
         for (Board move : legalMoves) {
