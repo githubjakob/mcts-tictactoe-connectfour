@@ -35,7 +35,7 @@ public class MctsSelfPlay {
     @Test
     public void selfPlay_connectFour() {
 
-        int playouts = 1;
+        int playouts = 100;
 
         int[] results = new int[3];
 

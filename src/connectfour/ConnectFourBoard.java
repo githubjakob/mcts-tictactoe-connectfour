@@ -121,7 +121,6 @@ public class ConnectFourBoard extends AbstractBoard implements Board {
         int row = 0, col = 0, diag = 0, rdiag = 0;
 
         for (int i = 0; i < width; i++) {
-            try {
                 if (i < height && state[latestMove.x][i] == latestMoveByPlayer) {
                     col++;
                     if (col == 4) {
@@ -138,13 +137,23 @@ public class ConnectFourBoard extends AbstractBoard implements Board {
                     }
                 } else row = 0;
 
-                if (i < height && state[i][i] == latestMoveByPlayer) {
+                int left = latestMove.x-latestMove.y;
+                if (left >= 0 && left+i < width && i < height && state[left+i][i] == latestMoveByPlayer) {
                     diag++;
                     if (diag == 4) {
                         status = latestMoveByPlayer == 1 ? PLAYER_1_WON : PLAYER_2_WON;
                         return status;
                     }
                 } else diag = 0;
+
+                int right = latestMove.x+latestMove.y;
+                if (right < width && right-i >= 0 && i < height && state[right-i][i] == latestMoveByPlayer) {
+                    rdiag++;
+                    if (rdiag == 4) {
+                        status = latestMoveByPlayer == 1 ? PLAYER_1_WON : PLAYER_2_WON;
+                        return status;
+                    }
+                } else rdiag = 0;
 /*
                 if (state[latestMove.x][i] == latestMoveByPlayer) {
                     col++;
@@ -158,9 +167,6 @@ public class ConnectFourBoard extends AbstractBoard implements Board {
                 if (state[latestMove.x][latestMove.y-i] == latestMoveByPlayer) row++;
                 if (state[i][i] == latestMoveByPlayer) diag++;
                 if (state[width - i - 1][i] == latestMoveByPlayer) rdiag++;*/
-            } catch (ArrayIndexOutOfBoundsException ex) {
-                // do nothing
-            }
 
         }
 
