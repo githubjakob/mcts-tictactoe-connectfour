@@ -1,11 +1,12 @@
-package game;
+package tictactoe;
 
-import game.Board;
+import general.Board;
+import general.Player;
 
 import java.awt.*;
 import java.util.Scanner;
 
-public class HumanPlayer extends Player {
+public class HumanPlayer implements Player {
 
     private Scanner scanner = new Scanner(System.in);
 

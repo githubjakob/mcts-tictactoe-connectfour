@@ -1,25 +1,17 @@
-package game;
+package tictactoe;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
+import general.AbstractBoard;
+import general.Board;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class Board {
-
-    public static final int GAME_IN_PROGRESS = 0;
-    public static final int PLAYER_1_WON = 1;
-    public static final int PLAYER_2_WON = 2;
-    public static final int DRAW = 3;
-
-    public static final Random RANDOM_GENERATOR = new Random();
+public class TicTacToeBoard extends AbstractBoard implements Board {
 
     public int[][] state; // be careful that it is state[y][x]
 
     public Point latestMove; // the coordinates of the piece set the last
-
-    public int latestMoveByPlayer = 2; // the number of the player who set the last piece
 
     private int size; // the size of the board, eg. 3 for a 3*3 board
 
@@ -27,7 +19,7 @@ public class Board {
 
     private Integer status = null;
 
-    public Board(int[][] state) {
+    public TicTacToeBoard(int[][] state) {
         this.size = state.length;
         this.state = new int[size][size];
         for (int i = 0; i < size; i++) {
@@ -38,7 +30,7 @@ public class Board {
         }
     }
 
-    public Board(int size) {
+    public TicTacToeBoard(int size) {
         this.size = size;
         state = new int[size][size];
 
@@ -51,6 +43,11 @@ public class Board {
 
     public Point getLatestMoveCoordinates() {
         return latestMove;
+    }
+
+    @Override
+    public int[][] getState() {
+        return this.state;
     }
 
     public void printBoard() {
@@ -69,7 +66,7 @@ public class Board {
             throw new RuntimeException("coordinates are null");
         }
         if (state == null) {
-            throw new RuntimeException("game.Board is null");
+            throw new RuntimeException("game.ConnectFourBoard is null");
         }
 
         int current = state[coordinates.y][coordinates.x];
@@ -90,32 +87,32 @@ public class Board {
             return null;
         }
         for (Board move : legalMoves) {
-            int player = move.latestMoveByPlayer;
-            if (move.state[0][0] == player) {
-                if (move.state[1][0] == player && move.state [2][0] == player) {
+            int player = move.getLatestMovePlayer();
+            if (move.getState()[0][0] == player) {
+                if (move.getState()[1][0] == player && move.getState() [2][0] == player) {
                     return move;
                 }
-                if (move.state[0][1] == player && move.state[0][2] == player) {
+                if (move.getState()[0][1] == player && move.getState()[0][2] == player) {
                     return move;
                 }
             }
 
-            if (move.state[2][2] == player) {
-                if (move.state[1][2] == player && move.state [0][2] == player) {
+            if (move.getState()[2][2] == player) {
+                if (move.getState()[1][2] == player && move.getState() [0][2] == player) {
                     return move;
                 }
-                if (move.state[2][1] == player && move.state[2][0] == player) {
+                if (move.getState()[2][1] == player && move.getState()[2][0] == player) {
                     return move;
                 }
             }
-            if (move.state[1][1] == player) {
-                if (move.state[0][0] == player && move.state[2][2] == player) {
+            if (move.getState()[1][1] == player) {
+                if (move.getState()[0][0] == player && move.getState()[2][2] == player) {
                     return move;
                 }
-                if (move.state[1][0] == player && move.state[1][2] == player) {
+                if (move.getState()[1][0] == player && move.getState()[1][2] == player) {
                     return move;
                 }
-                if (move.state[0][1] == player && move.state[2][1] == player) {
+                if (move.getState()[0][1] == player && move.getState()[2][1] == player) {
                     return move;
                 }
             }
@@ -166,14 +163,14 @@ public class Board {
         return status;
     }
 
-    public java.util.List<Board> getAllLegalNextMoves() {
+    public List<Board> getAllLegalNextMoves() {
         int nextPlayer = latestMoveByPlayer % 2 + 1;
 
         List<Board> nextMoves = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             for (int n = 0; n < size; n++) {
                 if(state[i][n] == 0) {
-                    Board legalMove = new Board(this.state);
+                    TicTacToeBoard legalMove = new TicTacToeBoard(this.state);
                     legalMove.setSquareOnBoard(new Point(n, i), nextPlayer);
                     nextMoves.add(legalMove);
                 }

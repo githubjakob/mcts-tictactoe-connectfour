@@ -1,8 +1,10 @@
-package game;
+package tictactoe;
 
+import general.Board;
+import general.Player;
 import mcts.Mcts;
 
-public class MctsPlayer extends Player {
+public class MctsPlayer implements Player {
 
     private final int computations;
 
@@ -22,6 +24,4 @@ public class MctsPlayer extends Player {
         currentBoard.setSquareOnBoard(winningMove.getLatestMoveCoordinates(), playerId);
         return winningMove;
     }
-
-
 }

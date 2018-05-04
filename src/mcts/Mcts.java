@@ -1,12 +1,10 @@
 package mcts;
 
-import game.Board;
+import general.Board;
 
 import java.time.Instant;
 
 public class Mcts {
-
-    private static final int MCTS_MAX_BRANCHING_FACTOR = 9;
 
     private final Board board;
 
@@ -28,8 +26,6 @@ public class Mcts {
         Instant start = Instant.now();
 
         long counter = 0l;
-
-        //Instant deadline = Instant.now().plusMillis(computations);
 
         Node tree = new Node(board);
 
@@ -67,7 +63,7 @@ public class Mcts {
     private Node expandNodeAndReturnRandom(Node node) {
         Node result = node;
 
-        game.Board board = node.board;
+        Board board = node.board;
 
         for (Board move : board.getAllLegalNextMoves()) {
             Node child = new Node(move);
@@ -87,7 +83,7 @@ public class Mcts {
 
         while (node != null) { // look for the root
             node.visits++;
-            if (node.board.latestMoveByPlayer == playerNumber) {
+            if (node.board.getLatestMovePlayer() == playerNumber) {
                 node.score++;
             }
 
@@ -111,10 +107,9 @@ public class Mcts {
             return node.board.getStatus();
         }
 
-
         while (node.board.getStatus() == Board.GAME_IN_PROGRESS) {
-            //game.Board nextMove = node.board.getWinningMoveOrElseRandom();
-            game.Board nextMove = node.board.getRandomLegalNextMove();
+            //game.ConnectFourBoard nextMove = node.board.getWinningMoveOrElseRandom();
+            Board nextMove = node.board.getRandomLegalNextMove();
 
             Node child = new Node(nextMove);
             child.parent = node;

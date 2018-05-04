@@ -1,5 +1,7 @@
-import game.HumanPlayer;
-import game.MctsPlayer;
+import connectfour.ConnectFourBoard;
+import tictactoe.HumanPlayer;
+import tictactoe.MctsPlayer;
+import tictactoe.TicTacToeBoard;
 
 public class Main {
 
@@ -15,7 +17,17 @@ public class Main {
      *
      */
     public static void main(String[] args) {
-       TicTacToe ticTacToe = new TicTacToe(new HumanPlayer(1), new MctsPlayer(2, 200));
+        /*
+       Game ticTacToe = new Game(new TicTacToeBoard(3),
+               new MctsPlayer(1, 200),
+               new HumanPlayer(2));
        ticTacToe.play();
+       */
+
+
+       Game connectFour = new Game(new ConnectFourBoard(7),
+               new connectfour.MctsPlayer(1, 200),
+               new connectfour.HumanPlayer(2));
+       connectFour.play();
     }
 }

@@ -1,8 +1,9 @@
-import game.Board;
-import game.Player;
-import game.Round;
+import general.Board;
+import general.Player;
+import tictactoe.TicTacToeBoard;
+import general.Round;
 
-public class TicTacToe {
+public class Game {
 
     private Board board;
 
@@ -14,8 +15,8 @@ public class TicTacToe {
 
     private static final Round ROUND = new Round();
 
-    public TicTacToe(Player player1, Player player2) {
-        board = new Board(3);
+    public Game(Board board, Player player1, Player player2) {
+        this.board = board;
         this.player1 = player1;
         this.player2 = player2;
     }
